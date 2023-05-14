@@ -1,3 +1,7 @@
+## [2.0.0] - 13/05/2023
+* Migrate to `FlutterView` from `ui.window` @Mayb3Nots
+## [1.3.0] - 27/12/2022
+* Fix disposing widgets after capturing in widgetToUiImage function @Lan-tb 
 ## [1.2.3] - 15/07/2021
 * Support Inheriting Theme for Invisible Widget
 

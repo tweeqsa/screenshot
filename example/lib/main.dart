@@ -15,9 +15,9 @@ class MyApp extends StatelessWidget {
       title: 'Flutter Demo',
       theme: ThemeData(
         textTheme: TextTheme(
-            headline6: TextStyle(
+            titleLarge: TextStyle(
           color: Colors.yellow,
-          fontSize: 50,
+          // fontSize: 50,
         )),
         // This is the theme of your application.
         //
@@ -79,7 +79,14 @@ class _MyHomePageState extends State<MyHomePage> {
                     border: Border.all(color: Colors.blueAccent, width: 5.0),
                     color: Colors.amberAccent,
                   ),
-                  child: Text("This widget will be captured as an image")),
+                  child: Stack(
+                    children: [
+                      Image.asset(
+                        'assets/images/flutter.png',
+                      ),
+                      Text("This widget will be captured as an image"),
+                    ],
+                  )),
             ),
             SizedBox(
               height: 25,
@@ -109,9 +116,16 @@ class _MyHomePageState extends State<MyHomePage> {
                       border: Border.all(color: Colors.blueAccent, width: 5.0),
                       color: Colors.redAccent,
                     ),
-                    child: Text(
-                      "This is an invisible widget",
-                      style: Theme.of(context).textTheme.headline6,
+                    child: Stack(
+                      children: [
+                        Image.asset(
+                          'assets/images/flutter.png',
+                        ),
+                        Text(
+                          "This is an invisible widget",
+                          style: Theme.of(context).textTheme.titleLarge,
+                        ),
+                      ],
                     ));
                 screenshotController
                     .captureFromWidget(
@@ -138,10 +152,7 @@ class _MyHomePageState extends State<MyHomePage> {
         appBar: AppBar(
           title: Text("Captured widget screenshot"),
         ),
-        body: Center(
-            child: capturedImage != null
-                ? Image.memory(capturedImage)
-                : Container()),
+        body: Center(child: Image.memory(capturedImage)),
       ),
     );
   }

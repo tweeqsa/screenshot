@@ -16,6 +16,7 @@ import 'src/platform_specific/file_manager/file_manager.dart';
 ///
 class ScreenshotController {
   late GlobalKey _containerKey;
+
   ScreenshotController() {
     _containerKey = GlobalKey();
   }
@@ -49,6 +50,8 @@ class ScreenshotController {
         );
         ByteData? byteData =
             await image?.toByteData(format: ui.ImageByteFormat.png);
+        image?.dispose();
+
         Uint8List? pngBytes = byteData?.buffer.asUint8List();
 
         return pngBytes;
@@ -59,8 +62,8 @@ class ScreenshotController {
   }
 
   Future<ui.Image?> captureAsUiImage(
-      {double? pixelRatio: 1,
-      Duration delay: const Duration(milliseconds: 20)}) {
+      {double? pixelRatio = 1,
+      Duration delay = const Duration(milliseconds: 20)}) {
     //Delay is required. See Issue https://github.com/flutter/flutter/issues/22308
     return new Future.delayed(delay, () async {
       try {
@@ -93,7 +96,7 @@ class ScreenshotController {
   ///
   Future<Uint8List> captureFromWidget(
     Widget widget, {
-    Duration delay: const Duration(seconds: 1),
+    Duration delay = const Duration(seconds: 1),
     double? pixelRatio,
     BuildContext? context,
     Size? targetSize,
@@ -105,13 +108,15 @@ class ScreenshotController {
         targetSize: targetSize);
     final ByteData? byteData =
         await image.toByteData(format: ui.ImageByteFormat.png);
+    image.dispose();
 
     return byteData!.buffer.asUint8List();
   }
 
+  /// If you are building a desktop/web application that supports multiple view. Consider passing the [context] so that flutter know which view to capture.
   static Future<ui.Image> widgetToUiImage(
     Widget widget, {
-    Duration delay: const Duration(seconds: 1),
+    Duration delay = const Duration(seconds: 1),
     double? pixelRatio,
     BuildContext? context,
     Size? targetSize,
@@ -141,17 +146,20 @@ class ScreenshotController {
     }
 
     final RenderRepaintBoundary repaintBoundary = RenderRepaintBoundary();
-
-    Size logicalSize = targetSize ??
-        ui.window.physicalSize / ui.window.devicePixelRatio; // Adapted
-    Size imageSize = targetSize ?? ui.window.physicalSize; // Adapted
+    final platformDispatcher = WidgetsBinding.instance.platformDispatcher;
+    final fallBackView = platformDispatcher.views.first;
+    final view =
+        context == null ? fallBackView : View.maybeOf(context) ?? fallBackView;
+    Size logicalSize =
+        targetSize ?? view.physicalSize / view.devicePixelRatio; // Adapted
+    Size imageSize = targetSize ?? view.physicalSize; // Adapted
 
     assert(logicalSize.aspectRatio.toStringAsPrecision(5) ==
         imageSize.aspectRatio
             .toStringAsPrecision(5)); // Adapted (toPrecision was not available)
 
     final RenderView renderView = RenderView(
-      window: ui.window,
+      view: view,
       child: RenderPositionedBox(
           alignment: Alignment.center, child: repaintBoundary),
       configuration: ViewConfiguration(
@@ -236,8 +244,14 @@ class ScreenshotController {
       ///
       ///retry untill capture is successfull
       ///
-
     } while (isDirty && retryCounter >= 0);
+    try {
+      /// Dispose All widgets
+      // rootElement.visitChildren((Element element) {
+      //   rootElement.deactivateChild(element);
+      // });
+      buildOwner.finalizeTree();
+    } catch (e) {}
 
     return image; // Adapted to directly return the image and not the Uint8List
   }
@@ -246,6 +260,7 @@ class ScreenshotController {
 class Screenshot<T> extends StatefulWidget {
   final Widget? child;
   final ScreenshotController controller;
+
   const Screenshot({
     Key? key,
     required this.child,
