@@ -1,3 +1,22 @@
+## [3.0.0] - 14/05/2024
+* Make API Changes compatible with Flutter 3.22.0
+* BREAKING CHANGE: Add flutter version constraint to be >=3.22.0. This will break for lower versions of Flutter.
+
+## [2.5.0] - 14/05/2024
+* Revert Changes from 2.4.0 release.
+* BREAKING CHANGE: Add flutter version constraint to be <3.22.0
+
+## [2.4.0] - 14/05/2024
+* Update  `ViewConfiguration` parameters.
+* BREAKING CHANGE:  This will throw Compile time error for versions <=3.19.
+## [2.3.0] - 15/03/2024
+* Revert ViewConfiguration `ViewConfiguration` parameters in `widgetToUiImage` to match API with size parameter .
+* BREAKING CHANGE:  This will throw Compile time error for versions >=3.18 and <=3.19 and for some Pre release versions.
+
+## [2.2.0] - 15/03/2024
+* Update ViewConfiguration `ViewConfiguration` parameters in `widgetToUiImage` to match API with constraint parameter.
+* BREAKING CHANGE:  This will throw Compile time error for versions <=3.18 and >=3.19.
+
 ## [2.1.0] - 13/05/2023
 * New Functions: `captureFromLongWidget` and `longWidgetToUiImage`. Calculates widgets size and captures whole widget at once.
 * BREAKING CHANGE: add minimum flutter version constraint. so if your project is below flutter 3.10, Please consider using version 1.3.0
